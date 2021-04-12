@@ -1,0 +1,10 @@
+fluffy-1
+grassy-2
+blurry-3
+smooth-4
+crusty-5
+fuzzy-6
+gravel-7
+rippled-8
+coarse-9
+barbed-10

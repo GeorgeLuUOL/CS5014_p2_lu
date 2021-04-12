@@ -23,6 +23,18 @@ def read_training_data(directory):
 
     return X, y, to_predict
 
+def read_training_data_texture(directory):
+    X = pd.read_csv(directory + '/train.csv', header=None)
+    print(X)
+
+    y = pd.read_csv(directory + '/texture.csv', header=None)
+    print(y)
+
+    to_predict = pd.read_csv(directory + '/test.csv', header=None)
+    print(to_predict)
+
+    return X, y, to_predict
+
 
 def train_binary_svc(X, y):
     clf = SVC(random_state=3251)
@@ -31,8 +43,8 @@ def train_binary_svc(X, y):
 
 
 def train_multiclass_svc(X, y):
-    gammas = [10, 5, 2, 1, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01]
-    c_vals = [100, 50, 20, 10, 5, 2, 1, 0.5, 0.1]
+    gammas = [0.1]
+    c_vals = [0.5]
 
     scores = []
     gammas_to_plot = []
@@ -166,39 +178,55 @@ if __name__ == "__main__":
     # df = pd.DataFrame(predicted_classes)
     # file_name = 'binary/PredictedClasses.csv'
     # df.to_csv(file_name, index=False)
-
+    print("Deal with color")
     print('============================================')
     print('Reading Multiclass data...')
     X, y, to_predict = read_training_data('multiclass')
+    X2,y2,to_predict2=read_training_data_texture('multiclass')
     print('\nMulticlass data read.')
 
     print('============================================')
     print('Training SVM...')
     mul_svc_clf = train_multiclass_svc(X, y)
+    mul_svc_clf2 = train_multiclass_svc(X2, y2)
 
     print('============================================')
     print('Scoring SVM...')
-    print('Total score on trained data:')
+    print('Total score on trained data for color:')
     score_classifier(mul_svc_clf, X, y)
-    print('Cross validated score of the classifier:')
+    print('Cross validated score of the classifier for color:')
     cross_val_score_classifier(mul_svc_clf, X, y)
+    print('Total score on trained data for texture:')
+    score_classifier(mul_svc_clf2, X2, y2)
+    print('Cross validated score of the classifier for color:')
+    cross_val_score_classifier(mul_svc_clf2, X2, y2)
 
     print('============================================')
     print('Training NN...')
     mul_nn_clf = train_multiclass_nn(X, y)
+    mul_nn_clf2 = train_multiclass_nn(X2, y2)
 
     print('============================================')
     print('Scoring NN...')
-    print('Total score on trained data:')
+    print('Total score on trained data for color:')
     score_classifier(mul_nn_clf, X, y)
     print('Cross validated score of the classifier:')
     cross_val_score_classifier(mul_nn_clf, X, y)
+    print('Total score on trained data for label:')
+    score_classifier(mul_nn_clf2, X2, y2)
+    print('Cross validated score of the classifier for label:')
+    cross_val_score_classifier(mul_nn_clf2, X2, y2)
 
     print('============================================')
     print('Making predictions...')
+    print('Making predictions for color')
     predicted_classes = [nn_predict(mul_nn_clf, to_predict), svc_predict(mul_svc_clf, to_predict)]
+    print('Making predictions for texture')
+    predicted_classes2 = [nn_predict(mul_nn_clf2, to_predict2), svc_predict(mul_svc_clf2, to_predict2)]
     df = pd.DataFrame(predicted_classes)
-    file_name = 'multiclass/PredictedClasses.csv'
+    file_name = 'multiclass/PredictedClasses_color.csv'
+    df = pd.DataFrame(predicted_classes2)
+    file_name = 'multiclass/PredictedClasses_texture.csv'
     df.to_csv(file_name, index=False)
 
 
