@@ -1,3 +1,6 @@
+from sklearn import preprocessing
+
+
 def warn(*args, **kwargs):
     pass
 import warnings
@@ -12,25 +15,32 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score
 
 def read_training_data(directory):
+    min_max_scaler = preprocessing.MinMaxScaler()
+
     X = pd.read_csv(directory + '/train.csv', header=None)
+    X=min_max_scaler.fit_transform(X)
     print(X)
 
     y = pd.read_csv(directory + '/color.csv', header=None)
     print(y)
 
     to_predict = pd.read_csv(directory + '/test.csv', header=None)
+    to_predict = min_max_scaler.fit_transform(to_predict)
     print(to_predict)
 
     return X, y, to_predict
 
 def read_training_data_texture(directory):
+    min_max_scaler = preprocessing.MinMaxScaler()
     X = pd.read_csv(directory + '/train.csv', header=None)
+    X = min_max_scaler.fit_transform(X)
     print(X)
 
     y = pd.read_csv(directory + '/texture.csv', header=None)
     print(y)
 
     to_predict = pd.read_csv(directory + '/test.csv', header=None)
+    to_predict = min_max_scaler.fit_transform(to_predict)
     print(to_predict)
 
     return X, y, to_predict
@@ -224,10 +234,11 @@ if __name__ == "__main__":
     print('Making predictions for texture')
     predicted_classes2 = [nn_predict(mul_nn_clf2, to_predict2), svc_predict(mul_svc_clf2, to_predict2)]
     df = pd.DataFrame(predicted_classes)
-    file_name = 'multiclass/PredictedClasses_color.csv'
+    file_name1 = 'multiclass/PredictedClasses_color.csv'
     df = pd.DataFrame(predicted_classes2)
-    file_name = 'multiclass/PredictedClasses_texture.csv'
-    df.to_csv(file_name, index=False)
+    file_name2 = 'multiclass/PredictedClasses_texture.csv'
+    df.to_csv(file_name1, index=False)
+    df.to_csv(file_name2, index=False)
 
 
 
