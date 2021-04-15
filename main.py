@@ -3,7 +3,10 @@ from sklearn import preprocessing
 
 def warn(*args, **kwargs):
     pass
+
+
 import warnings
+
 warnings.warn = warn
 
 import pandas as pd
@@ -14,11 +17,12 @@ from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import cross_val_score
 
+
 def read_training_data(directory):
     min_max_scaler = preprocessing.MinMaxScaler()
 
     X = pd.read_csv(directory + '/train.csv', header=None)
-    X=min_max_scaler.fit_transform(X)
+    X = min_max_scaler.fit_transform(X)
     print(X)
 
     y = pd.read_csv(directory + '/color.csv', header=None)
@@ -29,6 +33,7 @@ def read_training_data(directory):
     print(to_predict)
 
     return X, y, to_predict
+
 
 def read_training_data_texture(directory):
     min_max_scaler = preprocessing.MinMaxScaler()
@@ -53,8 +58,8 @@ def train_binary_svc(X, y):
 
 
 def train_multiclass_svc(X, y):
-    gammas = [0.1]
-    c_vals = [0.5]
+    gammas = [10, 5, 2, 1, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01]
+    c_vals = [100, 50, 20, 10, 5, 2, 1, 0.5, 0.1]
 
     scores = []
     gammas_to_plot = []
@@ -99,8 +104,8 @@ def train_binary_nn(X, y):
 
 
 def train_multiclass_nn(X, y):
-    layer_sizes = [100]
-    learning_inits = [0.001]
+    layer_sizes = [1, 2, 5, 10, 20, 50, 100, 150, 200, 500]
+    learning_inits = [1, 0.5, 0.2, 0.1, 0.05, 0.01, 0.001]
     scores = []
     sizes_to_plot = []
     inits_to_plot = []
@@ -155,44 +160,11 @@ def cross_val_score_classifier(clf, X, y):
 
 
 if __name__ == "__main__":
-    # print('============================================')
-    # print('Reading binary data...')
-    # X, y, to_predict = read_training_data('binary')
-    # print('\nBinary data read.')
-    #
-    # print('============================================')
-    # print('Training SVM...')
-    # bin_svc_clf = train_binary_svc(X, y)
-    #
-    # print('============================================')
-    # print('Scoring SVM...')
-    # print('Total score on trained data:')
-    # score_classifier(bin_svc_clf, X, y)
-    # print('Cross validated score of the classifier:')
-    # cross_val_score_classifier(bin_svc_clf, X, y)
-    #
-    # print('============================================')
-    # print('Training NN...')
-    # bin_nn_clf = train_binary_nn(X, y)
-    #
-    # print('============================================')
-    # print('Scoring NN...')
-    # print('Total score on trained data:')
-    # score_classifier(bin_nn_clf, X, y)
-    # print('Cross validated score of the classifier:')
-    # cross_val_score_classifier(bin_nn_clf, X, y)
-    #
-    # print('============================================')
-    # print('Making predictions...')
-    # predicted_classes = [nn_predict(bin_nn_clf, to_predict), svc_predict(bin_svc_clf, to_predict)]
-    # df = pd.DataFrame(predicted_classes)
-    # file_name = 'binary/PredictedClasses.csv'
-    # df.to_csv(file_name, index=False)
     print("Deal with color")
     print('============================================')
     print('Reading Multiclass data...')
     X, y, to_predict = read_training_data('multiclass')
-    X2,y2,to_predict2=read_training_data_texture('multiclass')
+    X2, y2, to_predict2 = read_training_data_texture('multiclass')
     print('\nMulticlass data read.')
 
     print('============================================')
@@ -208,7 +180,7 @@ if __name__ == "__main__":
     cross_val_score_classifier(mul_svc_clf, X, y)
     print('Total score on trained data for texture:')
     score_classifier(mul_svc_clf2, X2, y2)
-    print('Cross validated score of the classifier for color:')
+    print('Cross validated score of the classifier for texture:')
     cross_val_score_classifier(mul_svc_clf2, X2, y2)
 
     print('============================================')
@@ -220,11 +192,11 @@ if __name__ == "__main__":
     print('Scoring NN...')
     print('Total score on trained data for color:')
     score_classifier(mul_nn_clf, X, y)
-    print('Cross validated score of the classifier:')
+    print('Cross validated score of the classifier for color:')
     cross_val_score_classifier(mul_nn_clf, X, y)
-    print('Total score on trained data for label:')
+    print('Total score on trained data for texture:')
     score_classifier(mul_nn_clf2, X2, y2)
-    print('Cross validated score of the classifier for label:')
+    print('Cross validated score of the classifier for texture:')
     cross_val_score_classifier(mul_nn_clf2, X2, y2)
 
     print('============================================')
@@ -234,15 +206,8 @@ if __name__ == "__main__":
     print('Making predictions for texture')
     predicted_classes2 = [nn_predict(mul_nn_clf2, to_predict2), svc_predict(mul_svc_clf2, to_predict2)]
     df = pd.DataFrame(predicted_classes)
-    file_name1 = 'multiclass/PredictedClasses_color.csv'
+    file_name1 = 'multiclass/color_train.csv'
     df = pd.DataFrame(predicted_classes2)
-    file_name2 = 'multiclass/PredictedClasses_texture.csv'
+    file_name2 = 'multiclass/texture_train.csv'
     df.to_csv(file_name1, index=False)
     df.to_csv(file_name2, index=False)
-
-
-
-
-
-
-
